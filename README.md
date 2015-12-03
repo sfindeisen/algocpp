@@ -1,5 +1,4 @@
-# algocpp
-## Algorithms + data structures in C++
+# Algorithms + data structures in C++
 
 A lightweight and easy to use implementation, suitable for programming competitions.
 
