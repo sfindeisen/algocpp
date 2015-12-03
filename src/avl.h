@@ -530,8 +530,3 @@ template <class T> void avl<T>::printTree(ostream& s) const {
     printTree(s, 1, root);
     //printMsg(s, "/ =- avl -=- avl -=- avl -=");
 }
-
-};
-};
-
-#endif
