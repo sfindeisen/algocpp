@@ -1,5 +1,6 @@
+/** AVL tree. No duplicates. */
+
 #include <iostream>
-#include "memory.h"
 
 template <class T> struct avl_node {
     avl_node(T it) : item(it), parent(NULL), child_left(NULL), child_right(NULL), bf(0) {}
@@ -11,55 +12,43 @@ template <class T> struct avl_node {
     signed short bf;    // Balance factor: height(right) - height(left)
 };
 
-/** AVL tree. No duplicates. */
-template <class T> class avl : public container<T> {
+template <class T> class avl {
     public:
         avl();
         avl(const avl<T>& another);
 
-        virtual avl<T>& operator=(const avl<T>& another);
-        virtual         ~avl();
+        avl<T>& operator=(const avl<T>& another);
+        ~avl();
 
-        virtual bool contains(T item) const;
-        virtual void   insert(T item);
-        virtual void   remove(T item);
+        bool contains(const T& item) const;
+        void   insert(const T& item);
+        void   remove(const T& item);
 
-        /** Number of elements in this container. */
-        virtual t_index    size() const;
-        virtual    bool isEmpty() const;
-        virtual    void   clear();
-
-        virtual TString asString() const;
-        virtual void    printTree(ostream& s) const;
+        t_index    size() const;
+           bool isEmpty() const;
+           void   clear();
 
     protected:
-        virtual void printMsg (ostream& s, const TString& msg)              const;
-        virtual int  printTree(ostream& s, int level, const avl_node<T>* p) const;
+        void rotate_l_basic(avl_node<T>* pivot);
+        void rotate_r_basic(avl_node<T>* pivot);
 
-        virtual void rotate_l_basic(avl_node<T>* pivot);
-        virtual void rotate_r_basic(avl_node<T>* pivot);
+        void rotate_l (avl_node<T>* pivot);
+        void rotate_lr(avl_node<T>* pivot);
+        void rotate_r (avl_node<T>* pivot);
+        void rotate_rl(avl_node<T>* pivot);
 
-        virtual void rotate_l (avl_node<T>* pivot);
-        virtual void rotate_lr(avl_node<T>* pivot);
-        virtual void rotate_r (avl_node<T>* pivot);
-        virtual void rotate_rl(avl_node<T>* pivot);
+        avl_node<T>* find_max(avl_node<T>* tree) const;
+        avl_node<T>* find_min(avl_node<T>* tree) const;
+        void     fixup_insert(avl_node<T>* child, avl_node<T>* parent);
+        void     fixup_remove(avl_node<T>* child, avl_node<T>* parent);
 
-        virtual avl_node<T>* find_max(avl_node<T>* tree) const;
-        virtual avl_node<T>* find_min(avl_node<T>* tree) const;
-        virtual void     fixup_insert(avl_node<T>* child, avl_node<T>* parent);
-        virtual void     fixup_remove(avl_node<T>* child, avl_node<T>* parent);
-
-        virtual avl_node<T>*   copyTree(const avl_node<T>* node) const;
-        virtual void         deleteTree(const avl_node<T>* node) const;
+        avl_node<T>*   copyTree(const avl_node<T>* node) const;
+        void         deleteTree(const avl_node<T>* node) const;
 
     private:
         avl_node<T>* root;
         t_index      nodeCount;
 };
-
-// ========================================
-// Template implementation
-// ========================================
 
 template <class T> avl_node<T>* avl<T>::find_max(avl_node<T>* tree) const {
     if (tree->child_right)
@@ -73,17 +62,13 @@ template <class T> avl_node<T>* avl<T>::find_min(avl_node<T>* tree) const {
     return tree;
 }
 
-// ================================
-// AVL operations
-// ================================
-
-/** Single left rotation (just node moves, no bfs are updated). */
+/** Single left rotation (just move the nodes, no bfs are updated). */
 template <class T> void avl<T>::rotate_l_basic(avl_node<T>* pivot) {
     avl_node<T>* const parent  =  pivot->parent;
     avl_node<T>* const parent2 = parent->parent;
     avl_node<T>* const  childl =  pivot->child_left;
 
-    EBDS_TRACE_MSG("rotate left basic: pivot: " << (pivot->item) << ", parent: " << (parent->item));
+    std::cerr << "rotate left basic: pivot: " << (pivot->item) << ", parent: " << (parent->item) << std::endl;
 
     if (parent2) {
         if (parent == parent2->child_left)
@@ -103,13 +88,13 @@ template <class T> void avl<T>::rotate_l_basic(avl_node<T>* pivot) {
      pivot->child_left  = parent;
 }
 
-/** Single right rotation (just node moves, no bfs are updated). */
+/** Single right rotation (just move the nodes, no bfs are updated). */
 template <class T> void avl<T>::rotate_r_basic(avl_node<T>* pivot) {
     avl_node<T>* const parent  =  pivot->parent;
     avl_node<T>* const parent2 = parent->parent;
     avl_node<T>* const  childr =  pivot->child_right;
 
-    EBDS_TRACE_MSG("rotate right basic: pivot: " << (pivot->item) << ", parent: " << (parent->item));
+    std::cerr << "rotate right basic: pivot: " << (pivot->item) << ", parent: " << (parent->item) << std::endl;
 
     if (parent2) {
         if (parent == parent2->child_left)
@@ -129,17 +114,18 @@ template <class T> void avl<T>::rotate_r_basic(avl_node<T>* pivot) {
     pivot->child_right = parent;
 }
 
-/** Left rotation (right right case).
- *  This includes node moves as well as bfs udpate in pivot and its parent.
+/**
+ * Left rotation (right right case).
+ * This includes node moves as well as bfs udpate in pivot and its parent.
  *
- *  Here pivot is the lower node of the 2 (to-be root).
+ * Here pivot is the lower node of the 2 (to-be root).
  */
 template <class T> void avl<T>::rotate_l(avl_node<T>* pivot) {
     avl_node<T>*  const parent = pivot->parent;
     const signed int bf_parent = parent->bf;
     const signed int bf_pivot  =  pivot->bf;
 
-    EBDS_TRACE_MSG("rotate left: pivot: " << (pivot->item) << ", parent: " << (parent->item));
+    std::cerr << "rotate left: pivot: " << (pivot->item) << ", parent: " << (parent->item) << std::endl;
 
     rotate_l_basic(pivot);
 
@@ -148,17 +134,18 @@ template <class T> void avl<T>::rotate_l(avl_node<T>* pivot) {
      pivot->bf = bf_pivot - 1 - max(0, c1);
 }
 
-/** Right rotation (left left case).
- *  This includes node moves as well as bfs udpate in pivot and its parent.
+/**
+ * Right rotation (left left case).
+ * This includes node moves as well as bfs udpate in pivot and its parent.
  *
- *  Here pivot is the lower node of the 2 (to-be root).
+ * Here pivot is the lower node of the 2 (to-be root).
  */
 template <class T> void avl<T>::rotate_r(avl_node<T>* pivot) {
     avl_node<T>*  const parent = pivot->parent;
     const signed int bf_parent = parent->bf;
     const signed int bf_pivot  =  pivot->bf;
 
-    EBDS_TRACE_MSG("rotate right: pivot: " << (pivot->item) << ", parent: " << (parent->item));
+    std::cerr << "rotate right: pivot: " << (pivot->item) << ", parent: " << (parent->item) << std::endl;
 
     rotate_r_basic(pivot);
 
@@ -167,86 +154,36 @@ template <class T> void avl<T>::rotate_r(avl_node<T>* pivot) {
      pivot->bf = 1 + max(bf_pivot, c1);
 }
 
-/** Left rotation + right rotation (left right case).
- *  This includes node moves as well as bfs udpate in pivot, its parent
- *  and its grandparent.
+/**
+ * Left rotation + right rotation (left right case).
+ * This includes node moves as well as bfs udpate in pivot, its parent
+ * and its grandparent.
  *
- *  Here pivot is the lowest node of the 3 (to-be root).
+ * Here pivot is the lowest node of the 3 (to-be root).
  */
 template <class T> void avl<T>::rotate_lr(avl_node<T>* pivot) {
-    // TODO niepotrzebne zmienne
-    avl_node<T>* const parent1 = pivot->parent;
-    avl_node<T>* const parent2 = parent1->parent;
-    // const signed short oldbf   = pivot->bf;
-
-    EBDS_TRACE_MSG("rotate left-right: pivot: " << (pivot->item) << ", parent1: " << (parent1->item) << ", parent2: " << (parent2->item));
-
     rotate_l(pivot);
     rotate_r(pivot);
-
-/*
-    rotate_l_basic(p);
-    rotate_r_basic(p);
-
-      pivot->bf = 0;
-    parent1->bf = 0;
-    parent2->bf = 0;
-
-    switch (pbf) {
-        // 0 is also possible, since pivot can be a leaf
-        case -1:
-            parent2->bf = 1;
-            break;
-        case  1:
-            pivot->bf = -1;
-            break;
-    }
-*/
 }
 
-/** Right rotation + left rotation (right left case).
- *  This includes node moves as well as bfs udpate in pivot, its parent
- *  and its grandparent.
+/**
+ * Right rotation + left rotation (right left case).
+ * This includes node moves as well as bfs udpate in pivot, its parent
+ * and its grandparent.
  *
- *  Here pivot is the lowest node of the 3 (to-be root).
+ * Here pivot is the lowest node of the 3 (to-be root).
  */
 template <class T> void avl<T>::rotate_rl(avl_node<T>* pivot) {
-    // TODO niepotrzebne zmienne
-    avl_node<T>* const parent1 = pivot->parent;
-    avl_node<T>* const parent2 = parent1->parent;
-    // const signed short oldbf   = pivot->bf;
-
-    EBDS_TRACE_MSG("rotate right-left: pivot: " << (pivot->item) << ", parent1: " << (parent1->item) << ", parent2: " << (parent2->item));
-
     rotate_r(pivot);
     rotate_l(pivot);
-
-/*
-    rotate_r_basic(pivot);
-    rotate_l_basic(pivot);
-
-      pivot->bf = 0;
-    parent1->bf = 0;
-    parent2->bf = 0;
-
-    switch (bf) {
-        // 0 is also possible, since pivot can be a leaf
-        case -1:
-            pivot->bf = 1;
-            break;
-        case  1:
-            parent2->bf = -1;
-            break;
-    }
-*/
 }
 
 template <class T> void avl<T>::fixup_insert(avl_node<T>* child, avl_node<T>* parent) {
     while (parent) {
-        EBDS_TRACE_MSG("fixup_insert: child: " << (child->item) << ", parent: " << (parent->item));
+        std::cerr << "fixup_insert: child: " << (child->item) << ", parent: " << (parent->item) << std::endl;
 
         if (child == parent->child_left) {
-            parent->bf--;
+            --(parent->bf);
 
             if (0 == parent->bf)
                 break;
@@ -260,7 +197,7 @@ template <class T> void avl<T>::fixup_insert(avl_node<T>* child, avl_node<T>* pa
                 }
             }
         } else if (child == parent->child_right) {
-            parent->bf++;
+            ++(parent->bf);
 
             if (0 == parent->bf)
                 break;
@@ -280,15 +217,15 @@ template <class T> void avl<T>::fixup_insert(avl_node<T>* child, avl_node<T>* pa
     }
 }
 
-template <class T> void avl<T>::insert(T insItem) {
-    EBDS_TRACE_MSG("insert: " << insItem);
+template <class T> void avl<T>::insert(const T& insItem) {
+    std::cerr << "insert: " << insItem << std::endl;
 
     avl_node<T>* current = root;
     avl_node<T>* parent  = current;
 
     while (current) {
         if (current->item == insItem) {
-            EBDS_THROW(duplicate_value_exception());
+            throw (duplicate_value_exception());
         } else if (current->item < insItem) {
             parent  = current;
             current = current->child_right;
@@ -299,7 +236,7 @@ template <class T> void avl<T>::insert(T insItem) {
     }
 
     if (parent) {
-        EBDS_NEW(current, avl_node<T>(insItem));
+        current = new avl_node<T>(insItem);
         current->parent = parent;
 
         if (parent->item < insItem)
@@ -307,11 +244,11 @@ template <class T> void avl<T>::insert(T insItem) {
         else
             parent->child_left  = current;
 
-        nodeCount++;
+        ++nodeCount;
         fixup_insert(current, parent);
     } else {
         // This is the first node in the tree (root)
-        EBDS_NEW(root, avl_node<T>(insItem));
+        root = new avl_node<T>(insItem);
         nodeCount = 1;
     }
 }
@@ -321,7 +258,7 @@ template <class T> void avl<T>::fixup_remove(avl_node<T>* child, avl_node<T>* pa
 
     if ((! child) && (! (parent->child_left)) && (! (parent->child_right))) {
         // parent is a leaf; before remove() it had 1 child
-        EBDS_TRACE_MSG("fixup_remove: child: NULL, parent: " << (parent->item) << " (leaf)");
+        std::cerr << "fixup_remove: child: NULL, parent: " << (parent->item) << " (leaf)" << std::endl;
         parent->bf = 0;
          child = parent;
         parent = parent->parent;
@@ -331,9 +268,9 @@ template <class T> void avl<T>::fixup_remove(avl_node<T>* child, avl_node<T>* pa
         pivot = NULL;
 
         if (child) {
-            EBDS_TRACE_MSG("fixup_remove: child: " << (child->item) << ", parent: " << (parent->item));
+            std::cerr << "fixup_remove: child: " << (child->item) << ", parent: " << (parent->item) << std::endl;
         } else {
-            EBDS_TRACE_MSG("fixup_remove: child: NULL, parent: " << (parent->item));
+            std::cerr << "fixup_remove: child: NULL, parent: " << (parent->item) << std::endl;
         }
 
         if (child == parent->child_left) {
@@ -385,9 +322,8 @@ template <class T> void avl<T>::fixup_remove(avl_node<T>* child, avl_node<T>* pa
     }
 }
 
-template <class T> void avl<T>::remove(T delItem) {
-    EBDS_TRACE_MSG("remove: " << delItem);
-
+template <class T> void avl<T>::remove(const T& delItem) {
+    std::cerr << "remove: " << delItem << std::endl;
     avl_node<T>* current = root;
 
     while (current) {
@@ -404,24 +340,24 @@ template <class T> void avl<T>::remove(T delItem) {
             avl_node<T>* lmax = find_max(current->child_left);
             current->item = lmax->item;
             current = lmax;
-            EBDS_TRACE_MSG("lmax: " << (lmax->item));
-            EBDS_TRACE_MSG("current: " << (current->item));
+            std::cerr << "lmax: " << (lmax->item) << std::endl;
+            std::cerr << "current: " << (current->item) << std::endl;
         } else if (current->child_right) {
             avl_node<T>* rmin = find_min(current->child_right);
             current->item = rmin->item;
             current = rmin;
-            EBDS_TRACE_MSG("rmin: " << (rmin->item));
-            EBDS_TRACE_MSG("current: " << (current->item));
+            std::cerr << "rmin: " << (rmin->item) << std::endl;
+            std::cerr << "current: " << (current->item) << std::endl;
         } else {
             // current is a leaf!
-            EBDS_TRACE_MSG("current is a leaf!");
+            std::cerr << "current is a leaf!" << std::endl;
         }
 
         // Now delete current. It has at most 1 child.
         avl_node<T>* parent = current->parent;
 
         if (parent) {
-            EBDS_TRACE_MSG("parent: " << (parent->item));
+            std::cerr << "parent: " << (parent->item) << std::endl;
 
             avl_node<T>* child = NULL;
             if (current->child_left)
@@ -437,19 +373,19 @@ template <class T> void avl<T>::remove(T delItem) {
             if (child)
                 child->parent = parent;
 
-            EBDS_TRACE_MSG("delete: " << (current->item));
-            EBDS_DELETE(current);
+            std::cerr << "delete: " << (current->item) << std::endl;
+            delete current);
 
             nodeCount--;
             fixup_remove(child, parent);
         } else {
             // This is the last node in the tree.
-            EBDS_TRACE_MSG("delete root: " << (root->item));
-            EBDS_DELETE(root);
+            std::cerr << "delete root: " << (root->item); << std::endl
+            delete root;
             nodeCount = 0;
         }
     } else {
-        EBDS_THROW(no_such_value_exception());
+        throw (no_such_value_exception());
     }
 }
 

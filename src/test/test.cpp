@@ -1,4 +1,4 @@
-#include "../algo-snippets.h"
+#include "../algo-all.h"
 
 int main() {
     return 0;
