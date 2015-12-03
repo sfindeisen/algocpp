@@ -1,6 +1,6 @@
 # algocpp
-Algorithms + data structures in C++
+## Algorithms + data structures in C++
 
-A lightweight implementation, suitable for use in programming competitions.
+A lightweight and easy to use implementation, suitable for programming competitions.
 
-THIS IS WORK IN PROGRESS, CURRENTLY BUGGY.
+THIS IS A WORK IN PROGRESS, CURRENTLY DOES NOT EVEN COMPILE.
