@@ -12,8 +12,8 @@ A lightweight and easy to use implementation that can be used as a drop-in suppl
 avl<int> t;
 t.insert(1);
 t.insert(5);
-t.insert(7);
 t.insert(5);
+t.insert(7);
 t.remove(5);        // element remove
 t.insert(18);
 t.insert(5);

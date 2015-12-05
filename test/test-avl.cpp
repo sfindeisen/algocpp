@@ -111,8 +111,8 @@ BOOST_AUTO_TEST_CASE(test_avl_example) {
     avl<int> t;
     t.insert(1);
     t.insert(5);
-    t.insert(7);
     t.insert(5);
+    t.insert(7);
     t.remove(5);        // element remove
     t.insert(18);
     t.insert(5);
