@@ -2,7 +2,7 @@
 #define __ALGO__AVL__
 
 #include <algorithm>
-#include <iostream>
+#include <iterator>
 
 namespace algocpp {
 namespace avl {
@@ -40,8 +40,15 @@ template <class T> class avl_node {
         friend class avl_iter<T>;
 };
 
-template <class T> class avl_iter {
+template <class T> class avl_iter : std::bidirectional_iterator_tag {
     public:
+        // STL iterator traits
+        typedef std::ptrdiff_t difference_type;
+        typedef T value_type;
+        typedef T* pointer;
+        typedef T& reference;
+        typedef std::bidirectional_iterator_tag iterator_category;
+
         avl_iter();
         avl_iter(const avl_iter<T>& another);
         avl_iter<T>& operator=(const avl_iter<T>& another);
