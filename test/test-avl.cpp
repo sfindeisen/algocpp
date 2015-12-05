@@ -31,9 +31,9 @@ BOOST_AUTO_TEST_CASE(test_avl_simple)
 
 BOOST_AUTO_TEST_CASE(test_avl_medium)
 {
-    const int lo =  0;
-    const int hi =  2;
-    const unsigned int sz = 12;
+    const int lo =  -5;
+    const int hi =  15;
+    const unsigned int sz = 150;
 
     typedef boost::minstd_rand RNGType;
     RNGType rng(time(0));

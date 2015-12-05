@@ -426,7 +426,7 @@ template <class T> void avl<T>::insert(const T& insItem) {
         current = new avl_node<T>(insItem);
         current->parent = parent;
 
-        if ((parent->value) < insItem)
+        if ((parent->value) <= insItem)
             parent->child_right = current;
         else
             parent->child_left  = current;
@@ -460,14 +460,13 @@ template <class T> void avl<T>::fixup_remove(avl_node<T>* child, avl_node<T>* pa
             std::cerr << "fixup_remove: child: NULL, parent: " << (parent->value) << std::endl;
         }
 
-        if (child == parent->child_left) {
+        if (child == (parent->child_left)) {
             ++(parent->bf);
 
             if (1 == (parent->bf))
                 break;
             else if (2 == (parent->bf)) {
-                // Now child becomes the other child
-                child = parent->child_right;
+                child = parent->child_right;            // Now child becomes the other child
 
                 if (1 == (child->bf))
                     rotate_l(pivot = child);
@@ -482,8 +481,7 @@ template <class T> void avl<T>::fixup_remove(avl_node<T>* child, avl_node<T>* pa
             if (-1 == (parent->bf))
                 break;
             else if (-2 == (parent->bf)) {
-                // Now child becomes the other child
-                child = parent->child_left;
+                child = parent->child_left;             // Now child becomes the other child
 
                 if (-1 == (child->bf))
                     rotate_r(pivot = child);
@@ -495,7 +493,7 @@ template <class T> void avl<T>::fixup_remove(avl_node<T>* child, avl_node<T>* pa
         }
 
         if (pivot) {
-            // A rotation was made, and pivot is the new local root.
+            // A rotation has been made, and pivot is the new local root.
             if (pivot->bf) {
                 // This was a (+2, 0) or (-2, 0) case. So the subtree height didn't change.
                 break;
@@ -518,12 +516,12 @@ template <class T> void avl<T>::remove(const T& delv) {
     avl_node<T>* current = root;
 
     while (current) {
-        if ((current->value) == delv)
-            break;
-        else if (current->value < delv)
+        if ((current->value) < delv)
             current = current->child_right;
-        else
+        else if ((current->value) > delv)
             current = current->child_left;
+        else
+            break;
     }
 
     if (current) {
@@ -566,7 +564,6 @@ template <class T> void avl<T>::remove(const T& delv) {
 
             std::cerr << "delete: " << (current->value) << std::endl;
             delete current;
-
             --sz;
             fixup_remove(child, parent);
         } else {
