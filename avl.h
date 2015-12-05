@@ -11,17 +11,17 @@ template <class T> class avl;
 template <class T> class avl_iter;
 
 template <class T> class avl_node {
-    public:
+    protected:
         avl_node(const T& val) : value(val), parent(0), child_left(0), child_right(0), bf(0) {
         }
 
+    private:
         T            value;
         avl_node<T>* parent;
         avl_node<T>* child_left;
         avl_node<T>* child_right;
         signed short bf;                        // balance factor: height(right) - height(left)
 
-    private:
         friend avl_node<T>* find_min(avl_node<T>* tree) {
             avl_node<T>* p = tree;
             if (p)
@@ -35,6 +35,9 @@ template <class T> class avl_node {
                 for (avl_node<T>* c = p->child_right; c; p=c,c=c->child_right);
             return p;
         }
+
+        friend class avl<T>;
+        friend class avl_iter<T>;
 };
 
 template <class T> class avl_iter {
@@ -258,8 +261,7 @@ template <class T> void avl<T>::rotate_l_basic(avl_node<T>* pivot) {
     avl_node<T>* const parent  =  pivot->parent;
     avl_node<T>* const parent2 = parent->parent;
     avl_node<T>* const  childl =  pivot->child_left;
-
-    std::cerr << "rotate left basic: pivot: " << (pivot->value) << ", parent: " << (parent->value) << std::endl;
+    // std::cerr << "rotate left basic: pivot: " << (pivot->value) << ", parent: " << (parent->value) << std::endl;
 
     if (parent2) {
         if (parent == (parent2->child_left))
@@ -284,8 +286,7 @@ template <class T> void avl<T>::rotate_r_basic(avl_node<T>* pivot) {
     avl_node<T>* const parent  =  pivot->parent;
     avl_node<T>* const parent2 = parent->parent;
     avl_node<T>* const  childr =  pivot->child_right;
-
-    std::cerr << "rotate right basic: pivot: " << (pivot->value) << ", parent: " << (parent->value) << std::endl;
+    // std::cerr << "rotate right basic: pivot: " << (pivot->value) << ", parent: " << (parent->value) << std::endl;
 
     if (parent2) {
         if (parent == (parent2->child_left))
@@ -316,7 +317,7 @@ template <class T> void avl<T>::rotate_l(avl_node<T>* pivot) {
     const signed int bf_parent = parent->bf;
     const signed int bf_pivot  =  pivot->bf;
 
-    std::cerr << "rotate left: pivot: " << (pivot->value) << ", parent: " << (parent->value) << std::endl;
+    // std::cerr << "rotate left: pivot: " << (pivot->value) << ", parent: " << (parent->value) << std::endl;
     rotate_l_basic(pivot);
 
     const signed int c1 = 1 - bf_parent + std::max(0, bf_pivot);
@@ -335,7 +336,7 @@ template <class T> void avl<T>::rotate_r(avl_node<T>* pivot) {
     const signed int bf_parent = parent->bf;
     const signed int bf_pivot  =  pivot->bf;
 
-    std::cerr << "rotate right: pivot: " << (pivot->value) << ", parent: " << (parent->value) << std::endl;
+    // std::cerr << "rotate right: pivot: " << (pivot->value) << ", parent: " << (parent->value) << std::endl;
     rotate_r_basic(pivot);
 
     const signed int c1 = 1 + bf_parent + std::max(0, bf_pivot);
@@ -369,7 +370,7 @@ template <class T> void avl<T>::rotate_rl(avl_node<T>* pivot) {
 
 template <class T> void avl<T>::fixup_insert(avl_node<T>* child, avl_node<T>* parent) {
     while (parent) {
-        std::cerr << "fixup_insert: child: " << (child->value) << ", parent: " << (parent->value) << std::endl;
+        // std::cerr << "fixup_insert: child: " << (child->value) << ", parent: " << (parent->value) << std::endl;
 
         if (child == parent->child_left) {
             --(parent->bf);
@@ -407,8 +408,7 @@ template <class T> void avl<T>::fixup_insert(avl_node<T>* child, avl_node<T>* pa
 }
 
 template <class T> void avl<T>::insert(const T& insItem) {
-    std::cerr << "insert: " << insItem << std::endl;
-
+    // std::cerr << "insert: " << insItem << std::endl;
     avl_node<T>* current = root;
     avl_node<T>* parent  = current;
 
@@ -445,7 +445,7 @@ template <class T> void avl<T>::fixup_remove(avl_node<T>* child, avl_node<T>* pa
 
     if ((! child) && (! (parent->child_left)) && (! (parent->child_right))) {
         // parent is a leaf; before remove() it had 1 child
-        std::cerr << "fixup_remove: child: NULL, parent: " << (parent->value) << " (leaf)" << std::endl;
+        // std::cerr << "fixup_remove: child: NULL, parent: " << (parent->value) << " (leaf)" << std::endl;
         parent->bf = 0;
          child = parent;
         parent = parent->parent;
@@ -455,9 +455,9 @@ template <class T> void avl<T>::fixup_remove(avl_node<T>* child, avl_node<T>* pa
         pivot = 0;
 
         if (child) {
-            std::cerr << "fixup_remove: child: " << (child->value) << ", parent: " << (parent->value) << std::endl;
+            // std ::cerr << "fixup_remove: child: " << (child->value) << ", parent: " << (parent->value) << std::endl;
         } else {
-            std::cerr << "fixup_remove: child: NULL, parent: " << (parent->value) << std::endl;
+            // std::cerr << "fixup_remove: child: NULL, parent: " << (parent->value) << std::endl;
         }
 
         if (child == (parent->child_left)) {
@@ -512,7 +512,7 @@ template <class T> void avl<T>::erase(const T& value) {
 }
 
 template <class T> void avl<T>::remove(const T& delv) {
-    std::cerr << "remove: " << delv << std::endl;
+    // std::cerr << "remove: " << delv << std::endl;
     avl_node<T>* current = root;
 
     while (current) {
@@ -529,24 +529,24 @@ template <class T> void avl<T>::remove(const T& delv) {
             avl_node<T>* lmax = find_max(current->child_left);
             current->value = lmax->value;
             current = lmax;
-            std::cerr << "lmax: " << (lmax->value) << std::endl;
-            std::cerr << "current: " << (current->value) << std::endl;
+            // std::cerr << "lmax: " << (lmax->value) << std::endl;
+            // std::cerr << "current: " << (current->value) << std::endl;
         } else if (current->child_right) {
             avl_node<T>* rmin = find_min(current->child_right);
             current->value = rmin->value;
             current = rmin;
-            std::cerr << "rmin: " << (rmin->value) << std::endl;
-            std::cerr << "current: " << (current->value) << std::endl;
+            // std::cerr << "rmin: " << (rmin->value) << std::endl;
+            // std::cerr << "current: " << (current->value) << std::endl;
         } else {
             // current is a leaf!
-            std::cerr << "current is a leaf!" << std::endl;
+            // std::cerr << "current is a leaf!" << std::endl;
         }
 
         // Now delete current. It has at most 1 child.
         avl_node<T>* parent = current->parent;
 
         if (parent) {
-            std::cerr << "parent: " << (parent->value) << std::endl;
+            // std::cerr << "parent: " << (parent->value) << std::endl;
 
             avl_node<T>* child = 0;
             if (current->child_left)
@@ -562,13 +562,13 @@ template <class T> void avl<T>::remove(const T& delv) {
             if (child)
                 child->parent = parent;
 
-            std::cerr << "delete: " << (current->value) << std::endl;
+            // std::cerr << "delete: " << (current->value) << std::endl;
             delete current;
             --sz;
             fixup_remove(child, parent);
         } else {
             // This is the last node in the tree.
-            std::cerr << "delete root: " << (root->value) << std::endl;
+            // std::cerr << "delete root: " << (root->value) << std::endl;
             delete root;
             sz = 0;
         }

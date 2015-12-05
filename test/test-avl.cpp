@@ -14,9 +14,26 @@
 
 #include "../algo-all.h"
 
+using namespace algocpp::avl;
+
+template <class T> void test_iter(const avl<T>& tree) {
+    const int k=tree.size();
+    int i=0;
+    T t;
+
+    for (typename avl<T>::const_iterator it = tree.begin(); tree.end() != it; ++i,++it) {
+        T v = *it;
+        if (1 <= i)
+            BOOST_CHECK(t <= v);
+        t = v;
+    }
+
+    BOOST_CHECK_EQUAL(k,i);
+}
+
 BOOST_AUTO_TEST_CASE(test_avl_simple)
 {
-    algocpp::avl::avl<int> t;
+    avl<int> t;
     t.insert(1);
     t.insert(5);
     t.insert(7);
@@ -39,7 +56,7 @@ BOOST_AUTO_TEST_CASE(test_avl_medium)
     RNGType rng(time(0));
     boost::uniform_int<int> distribution(lo,hi);
     boost::variate_generator<RNGType, boost::uniform_int<int> > dice(rng, distribution);
-    algocpp::avl::avl<int> t;
+    avl<int> tree;
     std::map<int,unsigned int> m;
 
     for (unsigned int i=0; i<sz; ++i) {
@@ -52,16 +69,17 @@ BOOST_AUTO_TEST_CASE(test_avl_medium)
             ++(it->second);
         }
 
-        t.insert(j);
-        BOOST_CHECK_EQUAL(1+i, t.size());
+        tree.insert(j);
+        BOOST_CHECK_EQUAL(1+i, tree.size());
     }
 
-    std::cerr << "AVL: " << t << std::endl;
+    // std::cerr << "AVL: " << tree << std::endl;
+    test_iter<int>(tree);
 
     for (std::map<int,unsigned int>::iterator it = m.begin(); m.end() != it; ++it) {
-        std::cerr << "Check: " << (it->first) << std::endl;
-        BOOST_CHECK_EQUAL(it->second, t.count(it->first));
+        // std::cerr << "Check: " << (it->first) << std::endl;
+        BOOST_CHECK_EQUAL(it->second, tree.count(it->first));
     }
-    BOOST_CHECK_EQUAL(sz, t.size());
+    BOOST_CHECK_EQUAL(sz, tree.size());
 }
 
