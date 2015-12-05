@@ -1,11 +1,16 @@
-/** AVL tree. No duplicates. */
+#ifndef __ALGO__AVL__
+#define __ALGO__AVL__
 
+#include <algorithm>
 #include <iostream>
 
-template <class T> struct avl_node {
-    avl_node(T it) : item(it), parent(NULL), child_left(NULL), child_right(NULL), bf(0) {}
+namespace algocpp {
 
-    T            item;
+template <class T> struct avl_node {
+    avl_node(const T& it) : item(it), parent(0), child_left(0), child_right(0), bf(0) {
+    }
+
+    const T&     item;
     avl_node<T>* parent;
     avl_node<T>* child_left;
     avl_node<T>* child_right;
@@ -18,15 +23,15 @@ template <class T> class avl {
         avl(const avl<T>& another);
 
         avl<T>& operator=(const avl<T>& another);
-        ~avl();
+        virtual ~avl();
 
         bool contains(const T& item) const;
         void   insert(const T& item);
         void   remove(const T& item);
 
-        t_index    size() const;
-           bool isEmpty() const;
-           void   clear();
+        size_t    size() const;
+        bool   isEmpty() const;
+        void     clear();
 
     protected:
         void rotate_l_basic(avl_node<T>* pivot);
@@ -42,13 +47,34 @@ template <class T> class avl {
         void     fixup_insert(avl_node<T>* child, avl_node<T>* parent);
         void     fixup_remove(avl_node<T>* child, avl_node<T>* parent);
 
-        avl_node<T>*   copyTree(const avl_node<T>* node) const;
-        void         deleteTree(const avl_node<T>* node) const;
+        avl_node<T>* copyTree(const avl_node<T>* node) const;
+        void deleteTree(avl_node<T>* node);
 
     private:
         avl_node<T>* root;
-        t_index      nodeCount;
+        size_t       nodeCount;
 };
+
+template <class T> avl<T>::avl() : root(0), nodeCount(0) {    
+}
+
+template <class T> avl<T>::~avl() {
+    if (root) {
+        deleteTree(root);
+    }
+}
+
+template <class T> size_t avl<T>::size() const {
+    return nodeCount;
+}
+
+template <class T> void avl<T>::deleteTree(avl_node<T>* node) {
+    if (node) {
+        deleteTree(node->child_left);
+        deleteTree(node->child_right);
+        delete node;
+    }
+}
 
 template <class T> avl_node<T>* avl<T>::find_max(avl_node<T>* tree) const {
     if (tree->child_right)
@@ -71,7 +97,7 @@ template <class T> void avl<T>::rotate_l_basic(avl_node<T>* pivot) {
     std::cerr << "rotate left basic: pivot: " << (pivot->item) << ", parent: " << (parent->item) << std::endl;
 
     if (parent2) {
-        if (parent == parent2->child_left)
+        if (parent == (parent2->child_left))
             parent2->child_left = pivot;
         else
             parent2->child_right = pivot;
@@ -97,7 +123,7 @@ template <class T> void avl<T>::rotate_r_basic(avl_node<T>* pivot) {
     std::cerr << "rotate right basic: pivot: " << (pivot->item) << ", parent: " << (parent->item) << std::endl;
 
     if (parent2) {
-        if (parent == parent2->child_left)
+        if (parent == (parent2->child_left))
             parent2->child_left = pivot;
         else
             parent2->child_right = pivot;
@@ -126,12 +152,11 @@ template <class T> void avl<T>::rotate_l(avl_node<T>* pivot) {
     const signed int bf_pivot  =  pivot->bf;
 
     std::cerr << "rotate left: pivot: " << (pivot->item) << ", parent: " << (parent->item) << std::endl;
-
     rotate_l_basic(pivot);
 
-    const signed int c1 = 1 - bf_parent + max(0, bf_pivot);
+    const signed int c1 = 1 - bf_parent + std::max(0, bf_pivot);
     parent->bf = 0 - c1;
-     pivot->bf = bf_pivot - 1 - max(0, c1);
+     pivot->bf = bf_pivot - 1 - std::max(0, c1);
 }
 
 /**
@@ -146,12 +171,11 @@ template <class T> void avl<T>::rotate_r(avl_node<T>* pivot) {
     const signed int bf_pivot  =  pivot->bf;
 
     std::cerr << "rotate right: pivot: " << (pivot->item) << ", parent: " << (parent->item) << std::endl;
-
     rotate_r_basic(pivot);
 
-    const signed int c1 = 1 + bf_parent + max(0, bf_pivot);
+    const signed int c1 = 1 + bf_parent + std::max(0, bf_pivot);
     parent->bf = c1 - bf_pivot;
-     pivot->bf = 1 + max(bf_pivot, c1);
+     pivot->bf = 1 + std::max(bf_pivot, c1);
 }
 
 /**
@@ -185,27 +209,27 @@ template <class T> void avl<T>::fixup_insert(avl_node<T>* child, avl_node<T>* pa
         if (child == parent->child_left) {
             --(parent->bf);
 
-            if (0 == parent->bf)
+            if (0 == (parent->bf))
                 break;
-            else if (-2 == parent->bf) {
-                if (-1 == child->bf) {
+            else if (-2 == (parent->bf)) {
+                if (-1 == (child->bf)) {
                     rotate_r(child);
                     break;
-                } else if (1 == child->bf) {
+                } else if (1 == (child->bf)) {
                     rotate_lr(child->child_right);
                     break;
                 }
             }
-        } else if (child == parent->child_right) {
+        } else if (child == (parent->child_right)) {
             ++(parent->bf);
 
-            if (0 == parent->bf)
+            if (0 == (parent->bf))
                 break;
-            else if (2 == parent->bf) {
-                if (1 == child->bf) {
+            else if (2 == (parent->bf)) {
+                if (1 == (child->bf)) {
                     rotate_l(child);
                     break;
-                } else if (-1 == child->bf) {
+                } else if (-1 == (child->bf)) {
                     rotate_rl(child->child_left);
                     break;
                 }
@@ -224,9 +248,7 @@ template <class T> void avl<T>::insert(const T& insItem) {
     avl_node<T>* parent  = current;
 
     while (current) {
-        if (current->item == insItem) {
-            throw (duplicate_value_exception());
-        } else if (current->item < insItem) {
+        if ((current->item) <= insItem) {
             parent  = current;
             current = current->child_right;
         } else {
@@ -239,7 +261,7 @@ template <class T> void avl<T>::insert(const T& insItem) {
         current = new avl_node<T>(insItem);
         current->parent = parent;
 
-        if (parent->item < insItem)
+        if ((parent->item) < insItem)
             parent->child_right = current;
         else
             parent->child_left  = current;
@@ -274,35 +296,35 @@ template <class T> void avl<T>::fixup_remove(avl_node<T>* child, avl_node<T>* pa
         }
 
         if (child == parent->child_left) {
-            parent->bf++;
+            ++(parent->bf);
 
-            if (1 == parent->bf)
+            if (1 == (parent->bf))
                 break;
-            else if (2 == parent->bf) {
+            else if (2 == (parent->bf)) {
                 // Now child becomes the other child
                 child = parent->child_right;
 
-                if (1 == child->bf)
+                if (1 == (child->bf))
                     rotate_l(pivot = child);
-                else if (-1 == child->bf)
-                    rotate_rl(pivot = child->child_left);
-                else if (0 == child->bf)
+                else if (-1 == (child->bf))
+                    rotate_rl(pivot = (child->child_left));
+                else if (0 == (child->bf))
                     rotate_l(pivot = child);
             }
-        } else if (child == parent->child_right) {
-            parent->bf--;
+        } else if (child == (parent->child_right)) {
+            --(parent->bf);
 
-            if (-1 == parent->bf)
+            if (-1 == (parent->bf))
                 break;
-            else if (-2 == parent->bf) {
+            else if (-2 == (parent->bf)) {
                 // Now child becomes the other child
                 child = parent->child_left;
 
-                if (-1 == child->bf)
+                if (-1 == (child->bf))
                     rotate_r(pivot = child);
-                else if (1 == child->bf)
-                    rotate_lr(pivot = child->child_right);
-                else if (0 == child->bf)
+                else if (1 == (child->bf))
+                    rotate_lr(pivot = (child->child_right));
+                else if (0 == (child->bf))
                     rotate_r(pivot = child);
             }
         }
@@ -327,7 +349,7 @@ template <class T> void avl<T>::remove(const T& delItem) {
     avl_node<T>* current = root;
 
     while (current) {
-        if (current->item == delItem)
+        if ((current->item) == delItem)
             break;
         else if (current->item < delItem)
             current = current->child_right;
@@ -374,27 +396,27 @@ template <class T> void avl<T>::remove(const T& delItem) {
                 child->parent = parent;
 
             std::cerr << "delete: " << (current->item) << std::endl;
-            delete current);
+            delete current;
 
-            nodeCount--;
+            --nodeCount;
             fixup_remove(child, parent);
         } else {
             // This is the last node in the tree.
-            std::cerr << "delete root: " << (root->item); << std::endl
+            std::cerr << "delete root: " << (root->item) << std::endl;
             delete root;
             nodeCount = 0;
         }
     } else {
-        throw (no_such_value_exception());
+        // value not found -- just ignore
     }
 }
 
-template <class T> bool avl<T>::contains(T searchItem) const {
+template <class T> bool avl<T>::contains(const T& searchItem) const {
     avl_node<T>* p = root;
     while (p) {
-        if (p->item == searchItem)
+        if ((p->item) == searchItem)
             return true;
-        else if (p->item < searchItem)
+        else if ((p->item) < searchItem)
             p = p->child_right;
         else
             p = p->child_left;
@@ -406,16 +428,7 @@ template <class T> bool avl<T>::contains(T searchItem) const {
 // Printing --- this is for debugging purposes only!
 // =========================================================
 
-template <class T> TString avl<T>::asString() const {
-    TStringStream ss;
-    printTree(ss);
-    return ss.str();
-}
-
-template <class T> void avl<T>::printMsg(ostream& s, const TString& m) const {
-    s << m << std::endl;
-}
-
+/*
 template <class T> int avl<T>::printTree(ostream& s, int level, const avl_node<T>* p) const {
     if (p) {
         int hl=0, hr=0;
@@ -466,3 +479,8 @@ template <class T> void avl<T>::printTree(ostream& s) const {
     printTree(s, 1, root);
     //printMsg(s, "/ =- avl -=- avl -=- avl -=");
 }
+*/
+
+};
+
+#endif
