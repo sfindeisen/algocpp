@@ -2,4 +2,24 @@
 
 A lightweight and easy to use implementation that can be used as a drop-in supplement to STL. 100% STL compatible. Designed with programming competitions in mind.
 
-THIS IS A WORK IN PROGRESS, CURRENTLY DOES NOT EVEN COMPILE.
+## Features
+
+* AVL trees
+
+## Example
+
+```
+avl<int> t;
+t.insert(1);
+t.insert(5);
+t.insert(7);
+t.insert(5);
+
+BOOST_CHECK_EQUAL(4, t.size());
+BOOST_CHECK_EQUAL(1, t.count(1));
+BOOST_CHECK_EQUAL(2, t.count(5));
+BOOST_CHECK_EQUAL(1, t.count(7));
+BOOST_CHECK_EQUAL(0, t.count(2));
+
+std::vector vec(t.begin(), t.end());
+```
