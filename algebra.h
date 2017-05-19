@@ -4,6 +4,11 @@
 namespace algocpp {
 namespace algebra {
 
+  /** absolute value */
+  template <class T> T abs(T x) {
+    return ((0 <= x) ? x : (-x));
+  }
+
   /**
    * Greatest common divisor. Can also be zero, if all the parameters
    * are zero.

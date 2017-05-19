@@ -21,6 +21,21 @@ BOOST_AUTO_TEST_CASE(test_gcd2) {
     BOOST_CHECK_EQUAL(8*7, algocpp::algebra::gcd(16*3*7*7, 8*5*7*17));
 }
 
+BOOST_AUTO_TEST_CASE(test_gcd2_long) {
+    BOOST_CHECK_EQUAL(5L, algocpp::algebra::gcd(5L,15L));
+    BOOST_CHECK_EQUAL(1L, algocpp::algebra::gcd(5L,7L));
+    BOOST_CHECK_EQUAL(5L, algocpp::algebra::gcd(10L,15L));
+    BOOST_CHECK_EQUAL(5L, algocpp::algebra::gcd(10L,-15L));
+    BOOST_CHECK_EQUAL(5L, algocpp::algebra::gcd(-10L,15L));
+    BOOST_CHECK_EQUAL(7L, algocpp::algebra::gcd(7L,0L));
+    BOOST_CHECK_EQUAL(1L, algocpp::algebra::gcd(1L,0L));
+    BOOST_CHECK_EQUAL(7L, algocpp::algebra::gcd(0L,7L));
+    BOOST_CHECK_EQUAL(1L, algocpp::algebra::gcd(0L,1L));
+    BOOST_CHECK_EQUAL(0L, algocpp::algebra::gcd(0L,0L));
+
+    BOOST_CHECK_EQUAL(8*7L, algocpp::algebra::gcd(16*3*7*7L, 8*5*7*17L));
+}
+
 BOOST_AUTO_TEST_CASE(test_gcd3) {
     BOOST_CHECK_EQUAL(5, algocpp::algebra::gcd(5,15,35));
     BOOST_CHECK_EQUAL(5, algocpp::algebra::gcd(5,35,15));
