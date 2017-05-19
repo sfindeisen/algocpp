@@ -1,1 +1,2 @@
+PROGSBASE+=algebra
 PROGSBASE+=avl
