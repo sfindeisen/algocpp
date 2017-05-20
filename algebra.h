@@ -5,7 +5,7 @@ namespace algocpp {
 namespace algebra {
 
   /** absolute value */
-  template <class T> T abs(T x) {
+  template <class T> inline T abs(T x) {
     return ((0 <= x) ? x : (-x));
   }
 
