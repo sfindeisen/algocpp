@@ -6,6 +6,19 @@ A lightweight and easy to use implementation that can be used as a drop-in suppl
 
 * AVL trees
 
+## Requirements
+
+```shell
+apt-get install libboost-test-dev
+```
+
+## How to run the tests
+
+```shell
+cd test
+make run
+```
+
 ## Example
 
 ```
