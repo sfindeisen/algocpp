@@ -25,3 +25,8 @@ makedirs:
 clean:
 	-rm $(PROGS)
 	-rmdir $(DIROUT)
+
+.PHONY : run
+run : all
+	out/test-avl.out
+	out/test-algebra.out
