@@ -12,7 +12,7 @@
 #include <boost/random/variate_generator.hpp>
 #include <boost/generator_iterator.hpp>
 
-#include "../algo-all.h"
+#include "../avl.h"
 #include "utils.h"
 
 // random number generator type
