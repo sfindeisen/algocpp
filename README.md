@@ -9,7 +9,7 @@ A lightweight and easy to use implementation that can be used as a drop-in suppl
 ## Requirements
 
 ```shell
-apt-get install libboost-test-dev
+apt-get install g++ libboost-test-dev
 ```
 
 ## How to run the tests
