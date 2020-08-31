@@ -1,7 +1,7 @@
-#include <tuple>
-
 #ifndef __ALGO__ALGEBRA__
 #define __ALGO__ALGEBRA__
+
+#include <tuple>
 
 namespace algocpp {
 namespace algebra {
@@ -10,6 +10,10 @@ namespace algebra {
   template <class T> inline T abs(T x) {
     return ((0 <= x) ? x : (-x));
   }
+
+  /************************************************/
+  /* greatest common divisor (Euclid's algorithm) */
+  /************************************************/
 
   /**
    * Greatest common divisor. Can also be zero, if all the parameters
@@ -71,6 +75,10 @@ namespace algebra {
   template <class T> T gcd(T a, T b, T c, T d) {
     return gcd(gcd(a,b),gcd(c,d));
   }
+
+  /************************************************/
+  /* least common multiple                        */
+  /************************************************/
 
   /**
    * Least common multiple. Can also be zero, if at least 1 of the
