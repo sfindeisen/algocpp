@@ -30,3 +30,4 @@ clean:
 run : all
 	out/test-avl.out
 	out/test-algebra.out
+	out/test-text.out
