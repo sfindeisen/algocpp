@@ -4,7 +4,7 @@ PROGS__=$(addprefix out/test-, $(PROGSBASE))
 PROGS=$(addsuffix .out, $(PROGS__))
 
 CCPP=g++
-CPPFLAGS+= -Wall
+CPPFLAGS+= -Wall -std=c++11
 LNFLAGS+= -lboost_unit_test_framework
 DIROUT=out
 
