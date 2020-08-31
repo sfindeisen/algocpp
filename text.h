@@ -1,39 +1,50 @@
-char tekst[MaxN + 3];
-long ptab [MaxN + 3];           // KMP "P array": ptab[i] is max k<i : there is prefix/suffix of length k in tekst[1..i]
+#ifndef __ALGO__TEXT__
+#define __ALGO__TEXT__
 
-/** Tablica P; tekst must be 1-based string! (tekst[1], tekst[2]...) */
-void tablicaP() {
-    long k  = 0;
-    ptab[0] = 0;
-    ptab[1] = 0;
+#include <string>
 
-    for (long i = 2; i <= N; ++i) {
-        const char c = tekst[i];
-        while (k && (tekst[k+1] != c))
-            k = ptab[k];
-        if (tekst[k+1] == c)
-            ++k;
-        ptab[i] = k;
+namespace algocpp {
+namespace text {
+namespace kmp {
+
+  /********************************/
+  /* Knuth-Morris-Pratt algorithm */
+  /********************************/
+
+  /**
+   * Given a word, computes its P array. Resulting P[i+1] is the length of the longest proper prefix
+   * of the prefix word[0..i], which is also its (proper) suffix. The resulting P array is 1 longer
+   * than the input word.
+   *
+   * Thus:
+   *
+   *   P[0] == 0; corresponds to the empty prefix
+   *   P[1] == 0; corresponds to the 1-element prefix word[0..0]
+   *   P[N] is the length of the longest proper prefix and suffix of the input word.
+   */
+  std::vector<int> makeP(const std::string& word) {
+    const size_t N(word.size());
+    std::vector<int> p(N+1, 0);
+
+    if (2 <= N) {
+      size_t k = 0;
+
+      for (size_t i = 1; i < N; ++i) {
+        // k is the length of the longest proper prefix and suffix of word[0..i-1]
+        const char c = word[i];
+        while (k && (c != word[k]))
+          k = p[k];
+        if (c == word[k])
+          ++k;
+        p[i+1] = k;
+      }
     }
-}
 
-/** Tablica P: wersja dla napisow 1 za 2-gim w tablicy (bez '\0's); ii is word number */
-void tablicaP(const long ii) {
-    const long offset = tind[ii];           // poczatki slow
-    const long len    = tlen[ii];           // dlugosci slow
+    return p;
+  }
 
-    if (0 == len)
-        return;
+};
+};
+};
 
-          long k      = 0;
-    parr[offset]      = 0;    // prefix of length 1: P is 0
-
-    for (long i = 1; i < len; ++i) {
-        const char c = tkst[offset + i];
-        while (k && (tkst[offset + k] != c))
-            k = parr[offset + k - 1];
-        if (tkst[offset + k] == c)
-            ++k;
-        parr[offset + i] = k;
-    }
-}
+#endif
