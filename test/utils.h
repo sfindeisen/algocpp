@@ -22,4 +22,3 @@ template <class T> map<T,size_t> vector2map(const vector<T>& u) {
 }
 
 #endif
-
