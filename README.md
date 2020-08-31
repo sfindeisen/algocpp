@@ -5,6 +5,8 @@ A lightweight and easy to use implementation that can be used as a drop-in suppl
 ## Features
 
 * AVL trees
+* Euclid algorithm
+* Knuth-Morris-Pratt algorithm
 
 ## Requirements
 
