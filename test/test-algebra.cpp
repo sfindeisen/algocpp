@@ -3,7 +3,7 @@
 #define BOOST_TEST_MODULE test-algebra
 #include <boost/test/unit_test.hpp>
 
-#include "../algo-all.h"
+#include "../algebra.h"
 #include "utils.h"
 
 BOOST_AUTO_TEST_CASE(test_gcd2) {
