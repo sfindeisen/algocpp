@@ -54,6 +54,34 @@ BOOST_AUTO_TEST_CASE(test_gcd3) {
     BOOST_CHECK_EQUAL(2*7, algocpp::algebra::gcd(16*3*7*7, 8*5*7*17, 2*3*5*7));
 }
 
+template <class T> static void verify_gcd_ext(const T expected_gcd, const T a, const T b) {
+    // sanity check
+    if (expected_gcd) {
+        BOOST_CHECK_EQUAL(0, a % expected_gcd);
+        BOOST_CHECK_EQUAL(0, b % expected_gcd);
+    }
+
+    const std::tuple<T,T,T> w(algocpp::algebra::gcd_ext(a, b));
+    BOOST_CHECK_EQUAL(expected_gcd, std::get<0>(w));
+    BOOST_CHECK_EQUAL(expected_gcd, a * std::get<1>(w) + b * std::get<2>(w));
+}
+
+BOOST_AUTO_TEST_CASE(test_gcd2_ext) {
+    verify_gcd_ext(5,   5,  15);
+    verify_gcd_ext(1,   5,   7);
+    verify_gcd_ext(5,  10,  15);
+    verify_gcd_ext(5,  10, -15);
+    verify_gcd_ext(5, -10,  15);
+    verify_gcd_ext(5, -10, -15);
+    verify_gcd_ext(7,   7,   0);
+    verify_gcd_ext(1,   1,   0);
+    verify_gcd_ext(7,   0,   7);
+    verify_gcd_ext(1,   0,   1);
+    verify_gcd_ext(0,   0,   0);
+
+    verify_gcd_ext(8*7, 16*3*7*7, 8*5*7*17);
+}
+
 BOOST_AUTO_TEST_CASE(test_lcm2) {
     BOOST_CHECK_EQUAL(15,    algocpp::algebra::lcm( 5,15));
     BOOST_CHECK_EQUAL(15,    algocpp::algebra::lcm(-5,15));
