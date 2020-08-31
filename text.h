@@ -22,9 +22,9 @@ namespace kmp {
    *   P[1] == 0; corresponds to the 1-element prefix word[0..0]
    *   P[N] is the length of the longest proper prefix and suffix of the input word.
    */
-  std::vector<int> makeP(const std::string& word) {
+  std::vector<size_t> makeP(const std::string& word) {
     const size_t N(word.size());
-    std::vector<int> p(N+1, 0);
+    std::vector<size_t> p(N+1, 0);
 
     if (2 <= N) {
       size_t k = 0;
