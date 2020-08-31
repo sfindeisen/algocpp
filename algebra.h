@@ -1,3 +1,5 @@
+#include <tuple>
+
 #ifndef __ALGO__ALGEBRA__
 #define __ALGO__ALGEBRA__
 
@@ -21,6 +23,37 @@ namespace algebra {
     if (0 == b)
       return a;
     return gcd(b, a % b);
+  }
+
+  /**
+   * Greatest common divisor (extended version). Given a and b, returns a
+   * tuple (g,x,y) such that:
+   *
+   *   g = gcd(a,b) = ax + by
+   */
+  template <class T> std::tuple<T,T,T> gcd_ext(T a, T b) {
+    if (a < 0) {
+      const std::tuple<T,T,T> w(gcd_ext(-a, b));
+      return std::make_tuple(std::get<0>(w), 0 - std::get<1>(w), std::get<2>(w));
+    }
+    if (b < 0) {
+      const std::tuple<T,T,T> w(gcd_ext(a, -b));
+      return std::make_tuple(std::get<0>(w), std::get<1>(w), 0 - std::get<2>(w));
+    }
+    if (a < b) {
+      const std::tuple<T,T,T> w(gcd_ext(b, a));
+      return std::make_tuple(std::get<0>(w), std::get<2>(w), std::get<1>(w));
+    }
+    if (0 == b)
+      return std::make_tuple(a,1,0);
+
+    // Here: 0 < b <= a
+
+    const T q(a / b);
+    const T r(a % b);
+
+    const std::tuple<T,T,T> w(gcd_ext(b, r));
+    return std::make_tuple(std::get<0>(w), std::get<2>(w), std::get<1>(w) - q * std::get<2>(w));
   }
 
   /**
