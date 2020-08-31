@@ -24,23 +24,46 @@ namespace kmp {
    */
   std::vector<size_t> makeP(const std::string& word) {
     const size_t N(word.size());
-    std::vector<size_t> p(N+1, 0);
+    std::vector<size_t> P(N+1, 0);
 
     if (2 <= N) {
       size_t k = 0;
 
       for (size_t i = 1; i < N; ++i) {
-        // k is the length of the longest proper prefix and suffix of word[0..i-1]
+        // word[0..i]
+        // k is the computed P for word[0..i-1]
         const char c = word[i];
         while (k && (c != word[k]))
-          k = p[k];
+          k = P[k];
         if (c == word[k])
           ++k;
-        p[i+1] = k;
+        P[i+1] = k;
       }
     }
 
-    return p;
+    return P;
+  }
+
+  /** Returns the list of occurences of a non-empty pattern in the given text. */
+  std::vector<size_t> search(const std::string& pattern, const std::string& text) {
+    const size_t M(pattern.size());
+    const size_t N(text.size());
+    std::vector<size_t> result;    // list of occurences
+
+    if (M && (M <= N)) {
+      const std::vector<size_t> P(makeP(pattern));
+      size_t j = 0;    // length of the matched pattern prefix
+
+      for (size_t i=0; i+M <= N; ) {
+        j = P[j];
+        for (; (j < M) && (pattern[j] == text[i+j]); ++j);
+        if (M == j)
+          result.push_back(i);
+        i += ((P[j] < j) ? (j - P[j]) : 1);
+      }
+    }
+
+    return result;
   }
 
 };
