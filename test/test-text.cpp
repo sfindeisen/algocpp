@@ -189,4 +189,28 @@ BOOST_AUTO_TEST_CASE(test_search) {
     std::vector<size_t> occ(kmp::search("abaa", "zxcabaacabaac"));
     BOOST_CHECK_EQUAL_COLLECTIONS(occ.begin(), occ.end(), expected_occ.begin(), expected_occ.end());
   }
+
+  {
+    std::vector<size_t> expected_occ {};
+    std::vector<size_t> occ(kmp::search("s", "zxcabaacabaac"));
+    BOOST_CHECK_EQUAL_COLLECTIONS(occ.begin(), occ.end(), expected_occ.begin(), expected_occ.end());
+  }
+
+  {
+    std::vector<size_t> expected_occ {0};
+    std::vector<size_t> occ(kmp::search("z", "zxcabaacabaac"));
+    BOOST_CHECK_EQUAL_COLLECTIONS(occ.begin(), occ.end(), expected_occ.begin(), expected_occ.end());
+  }
+
+  {
+    std::vector<size_t> expected_occ {1};
+    std::vector<size_t> occ(kmp::search("x", "zxcabaacabaac"));
+    BOOST_CHECK_EQUAL_COLLECTIONS(occ.begin(), occ.end(), expected_occ.begin(), expected_occ.end());
+  }
+
+  {
+    std::vector<size_t> expected_occ {2,7,12};
+    std::vector<size_t> occ(kmp::search("c", "zxcabaacabaac"));
+    BOOST_CHECK_EQUAL_COLLECTIONS(occ.begin(), occ.end(), expected_occ.begin(), expected_occ.end());
+  }
 }
